@@ -10,7 +10,7 @@ classify_model: assets/tiny_resnet.onnx                           # 未知使用
 yolo11_model_path: assets/yolo11.xml                              # 模型路径        YOLO需要
 yolov8_model_path: assets/yolov8.xml                              # 模型路径        YOLO需要
 # yolov5_model_path: assets/yolov5.xml                              # 模型路径        YOLO需要
-yolov5_model_path: assets/yolov5s_best.rknn                        # 模型路径        YOLO需要
+yolov5_model_path: assets/yolov8n.rknn                        # 模型路径        YOLO需要
 device: NPU                                                       # CPU和GPU       YOLO需要
 min_confidence: 0.8                                               # 未知作用        YOLO需要
 use_traditional: true                                             # 是否传统        YOLO需要

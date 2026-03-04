@@ -5,16 +5,15 @@
 #include "tools/exiter.hpp"
 #include "tools/logger.hpp"
 #include "tools/math_tools.hpp"
-#include "tasks/auto_aim/fire_yolo.hpp"
+#include "tasks/auto_aim/pose_yolo.hpp"   // 你的检测类头文件（根据实际情况调整）
 
 const std::string keys =
   "{help h usage ? |                     | 输出命令行参数说明}"
-  "{config-path c  | configs/flower.yaml | yaml配置文件路径 }"
-  "{d display      | true                | 显示视频流       }";
+  "{config-path c  | configs/pose.yaml    | yaml配置文件路径 }"
+  "{d display      | true                 | 显示视频流       }";
 
 int main(int argc, char * argv[])
 {
-  // 所有程序都加的部分
   cv::CommandLineParser cli(argc, argv, keys);
   if (cli.has("help"))
   {
@@ -22,31 +21,48 @@ int main(int argc, char * argv[])
     return 0;
   }
 
-  // 用于退出
   tools::Exiter exiter;
 
-  // 路径提取
   auto config_path = cli.get<std::string>("config-path");
-  auto display = cli.has("display");                        // 是否显示视频流
-  io::Camera camera(config_path);                                         // 设备创建
-  auto_aim::Fire_YOLO yolo(config_path);                                  // 目标检测
+  auto display = cli.has("display");
+
+  // 初始化摄像头（根据配置文件）
+  io::Camera camera(config_path);
+  // 初始化人体检测器（根据配置文件）
+  auto_aim::Pose_YOLO yolo(config_path);
 
   cv::Mat img;
   std::chrono::steady_clock::time_point timestamp;
-  auto last_stamp = std::chrono::steady_clock::now(); // 获得当前时间
+  auto last_stamp = std::chrono::steady_clock::now();
 
   for (int frame_count = 0; !exiter.exit(); frame_count++)
   {
-    camera.read(img, timestamp);                                  // 读摄像头
-    auto fires = yolo.detect(img, frame_count);                   // 检测到的火焰列表
+    // 读取一帧
+    camera.read(img, timestamp);
+    if (img.empty())
+    {
+      tools::logger()->warn("Empty frame received, skipping...");
+      continue;
+    }
 
-    auto dt = tools::delta_time(timestamp, last_stamp);       // 计算时间差
+    // 执行检测
+    auto detections = yolo.detect(img, frame_count);
+
+    // 计算帧率
+    auto dt = tools::delta_time(timestamp, last_stamp);
     last_stamp = timestamp;
 
-    tools::logger()->info("{:.2f} fps", 1 / dt);                   // 这是一个格式化日志输
+    // 日志输出
+    tools::logger()->info("Frame {}: {:.2f} fps, {} detections",
+                          frame_count, 1.0 / dt, detections.size());
 
-    if (!display) continue;
-    cv::imshow("img", img);                                 // 显示
-    if (cv::waitKey(1) == 'q') break;                                // 退出
+    if (display)
+    {
+      // cv::imshow("Human Detection", img);
+      if (cv::waitKey(1) == 'q')
+        break;
+    }
   }
+
+  return 0;
 }

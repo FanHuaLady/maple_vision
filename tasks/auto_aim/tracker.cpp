@@ -235,7 +235,7 @@ bool Tracker::set_target(std::list<Armor> & armors, std::chrono::steady_clock::t
   if (armors.empty()) return false;
 
   auto & armor = armors.front();
-  solver_.solve(armor);
+  solver_.solve(armor);                                                     // !!!!!!!!!!!!!!!!!!!!!
 
   // 根据兵种优化初始化参数
   auto is_balance = (armor.type == ArmorType::big) &&

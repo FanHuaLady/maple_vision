@@ -261,15 +261,9 @@ void Fire_YOLOV5::draw_detections(
   const cv::Mat & img, const std::list<Fire> & fires, int frame_count) const
 {
   auto detection = img.clone();                                 // 创建输入图像的副本
-  // 在图像左上角(10,30)位置显示当前帧号
-  tools::draw_text(detection, fmt::format("[{}]", frame_count), {10, 30}, {255, 255, 255});
   for (const auto & fire : fires)                                   // 取出火结构体
   {
     cv::rectangle(detection, fire.bbox, cv::Scalar(0, 0, 255), 2);
-    std::string label = fmt::format("Fire: {:.2f}", fire.confidence);
-    cv::putText(detection, label,cv::Point(fire.bbox.x, fire.bbox.y - 10),
-                cv::FONT_HERSHEY_SIMPLEX, 0.5, cv::Scalar(0, 0, 255), 2);
-    // 绘制中心点
     cv::circle(detection, fire.center, 3, cv::Scalar(0, 255, 0), -1);
   }
   if (use_roi_)

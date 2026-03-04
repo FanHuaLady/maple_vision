@@ -10,6 +10,7 @@ add_subdirectory(planner/tinympc)
 add_library(auto_aim OBJECT 
     armor.cpp
     fire.cpp
+    pose.cpp
     classifier.cpp 
     detector.cpp
     solver.cpp
@@ -20,10 +21,12 @@ add_library(auto_aim OBJECT
     shooter.cpp
     yolo.cpp
     fire_yolo.cpp
+    pose_yolo.cpp
     yolos/yolov5.cpp
     yolos/yolov8.cpp
     yolos/yolo11.cpp
     yolos/fire_yolov5.cpp
+    yolos/pose_yolov8.cpp
     multithread/commandgener.cpp
     multithread/mt_detector.cpp
     planner/planner.cpp
