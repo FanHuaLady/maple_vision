@@ -8,6 +8,10 @@
 #include "tasks/auto_aim/pose_yolo.hpp"   // 你的检测类头文件（根据实际情况调整）
 #include "io/flower_usb/flower_usb.hpp"
 
+  // cmake -B build
+  // make -C build/ -j`nproc`
+  // ./build/flower_test
+  
 const std::string keys =
   "{help h usage ? |                     | 输出命令行参数说明}"
   "{config-path c  | configs/pose.yaml    | yaml配置文件路径 }"
@@ -32,11 +36,11 @@ int main(int argc, char * argv[])
   // 初始化人体检测器（根据配置文件）
   auto_aim::Pose_YOLO yolo(config_path);
 
+
   const char* usb_device = "/dev/ttyACM0";
   if (io::usb_open(usb_device) != 0)
   {
     tools::logger()->warn("Failed to open USB device {}, continuing without USB.", usb_device);
-    // 可以选择退出或继续运行，这里设为警告并继续
   }
 
   cv::Mat img;
@@ -55,6 +59,7 @@ int main(int argc, char * argv[])
 
     // 执行检测
     auto detections = yolo.detect(img, frame_count);
+
 
     for (const auto& pose : detections)
     {
