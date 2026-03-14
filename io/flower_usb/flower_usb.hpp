@@ -27,7 +27,6 @@ public:
 private:
   int fd_;                                            // USB 设备文件描述符
   std::atomic<bool> running_;                         // 线程运行标志
-
   // 发送相关
   std::thread sender_thread_;
   std::queue<std::string> send_queue_;
